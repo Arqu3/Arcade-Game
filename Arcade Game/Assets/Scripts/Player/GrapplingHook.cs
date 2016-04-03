@@ -3,103 +3,106 @@ using System.Collections;
 
 public class GrapplingHook : MonoBehaviour {
 
-    public GameObject hookPrefab;
-    public float shotSpeed = 20.0f;
-    public float moveToHookSpeed = 400.0f;
+	public GameObject hookPrefab;
+	public float shotSpeed = 20.0f;
+	public float moveToHookSpeed = 400.0f;
 
-    Vector3 relativePlayerPos;
-    public Vector3 direction;
-    public bool hasShot = false;
-    bool willMove = false;
-    GameObject clone;
+	Vector3 relativePlayerPos;
+	public Vector3 shootDirection;
+	public Vector3 moveDirection;
+	public bool hasShot = false;
+	bool willMove = false;
+	GameObject clone;
 
-    // Use this for initialization
-    void Start () {
+	// Use this for initialization
+	void Start ()
+	{
 	}
-
-    void FixedUpdate()
-    {
-        if (willMove)
-        {
-            Physics2D.IgnoreLayerCollision(9, 10, false);
-            GetComponent<Rigidbody2D>().gravityScale = 0;
-            MoveToHook();
-        }
-        else
-        {
-            Physics2D.IgnoreLayerCollision(9, 10, true);
-            GetComponent<Rigidbody2D>().gravityScale = 1;
-        }
-    }
 	
 	// Update is called once per frame
-	void Update () {
-        relativePlayerPos = Camera.main.WorldToScreenPoint(transform.position);
+	void Update ()
+	{
+		relativePlayerPos = Camera.main.WorldToScreenPoint(transform.position);
 
-        direction = Input.mousePosition - relativePlayerPos;
+		shootDirection = Input.mousePosition - relativePlayerPos;
 
-        if (Input.GetMouseButtonDown(0) && !hasShot)
-        {
-            Shoot();
-        }
-    }
+		if (willMove)
+		{
+			moveDirection = clone.gameObject.transform.position - transform.position;
+		}
 
-    void Shoot()
-    {
-        hasShot = true;
-        clone = (GameObject)Instantiate(hookPrefab, transform.position, Quaternion.identity);
+		//If hook is in air and shoots again
+		//if (Input.GetMouseButtonDown(0) && hasShot)
+		//{
+		//    Destroy(clone);
+		//    Shoot();
+		//}
+		//Shoot hook
+		if (Input.GetMouseButtonDown(0) && !hasShot)
+		{
+			Shoot();
+		}
 
-        //Ceate unit vector for shot direction
-        float x = direction.x;
-        float y = direction.y;
+		//Only check collision between player and hook when player moves towards it
+		if (willMove)
+		{
+			Physics2D.IgnoreLayerCollision(9, 10, false);
+			GetComponent<Rigidbody2D>().gravityScale = 0;
+			MoveToHook();
+		}
+		else
+		{
+			Physics2D.IgnoreLayerCollision(9, 10, true);
+			GetComponent<Rigidbody2D>().gravityScale = 1;
+		}
+	}
 
-        float squareX = x * x;
-        float squareY = y * y;
+	void Shoot()
+	{
+		hasShot = true;
+		clone = (GameObject)Instantiate(hookPrefab, transform.position, Quaternion.identity);
 
-        float added = squareX + squareY;
+		//Ceate unit vector for shot direction
+		float x = shootDirection.x;
+		float y = shootDirection.y;
 
-        Mathf.Sqrt(added);
+		float squareX = x * x;
+		float squareY = y * y;
 
-        Vector3 unit = new Vector3((x / added), (y / added), 0);
+		float added = squareX + squareY;
 
-        clone.GetComponent<Rigidbody2D>().AddForce(unit * shotSpeed);
-    }
+		added = Mathf.Sqrt(added);
 
-    void SetHookMovement()
-    {
-        GetComponent<Rigidbody2D>().velocity = Vector2.zero;
-        GetComponent<Rigidbody2D>().angularVelocity = 0;
-        willMove = true;
-    }
+		Vector3 unit = new Vector3((x / added), (y / added), 0);
 
-    void MoveToHook()
-    {
-        float x = direction.x;
-        float y = direction.y;
+		clone.GetComponent<Rigidbody2D>().AddForce(unit * shotSpeed);
+	}
 
-        float squareX = x * x;
-        float squareY = y * y;
+	void SetHookMovement()
+	{
+		GetComponent<Rigidbody2D>().velocity = Vector2.zero;
+		GetComponent<Rigidbody2D>().angularVelocity = 0;
+		willMove = true;
+	}
 
-        float added = squareX + squareY;
+	void MoveToHook()
+	{
+		Vector3 temp = moveDirection;
+		temp.Normalize();
+		transform.position = new Vector2(transform.position.x + temp.x * moveToHookSpeed * Time.deltaTime, 
+			transform.position.y + temp.y * moveToHookSpeed * Time.deltaTime);
+	}
 
-        Mathf.Sqrt(added);
-
-        Vector3 unit = new Vector3((x / added), (y / added), 0);
-
-        Vector3 param = unit * moveToHookSpeed * Time.deltaTime;
-        transform.position = new Vector2(transform.position.x + param.x, transform.position.y + param.y);
-    }
-
-    void OnCollisionEnter2D(Collision2D aCollision)
-    {
-        if (willMove)
-        {
-            if (aCollision.gameObject.tag == "Hook")
-            {
-                Destroy(clone);
-                hasShot = false;
-                willMove = false;
-            }
-        }
-    }
+	void OnCollisionEnter2D(Collision2D aCollision)
+	{
+		if (willMove)
+		{
+			if (aCollision.gameObject.tag == "Hook")
+			{
+				Destroy(clone);
+				hasShot = false;
+				willMove = false;
+			}
+		}
+	}
 }

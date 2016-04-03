@@ -15,7 +15,8 @@ public class HookBehavior : MonoBehaviour {
 	}
 	
 	// Update is called once per frame
-	void Update () {
+	void Update ()
+    {
 	}
 
     void OnCollisionEnter2D(Collision2D aCollision)

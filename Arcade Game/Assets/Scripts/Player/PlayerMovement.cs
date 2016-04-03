@@ -25,7 +25,9 @@ public class PlayerMovement : MonoBehaviour {
 
         //Non-physics-based movement
         float x = hSpeed * maxSpeed * Time.deltaTime;
-        transform.position = new Vector2(transform.position.x + x, transform.position.y);
+        //transform.position = new Vector2(transform.position.x + x, transform.position.y);
+
+        transform.position = transform.position + new Vector3(x, 0, 0);
 
         //Reload level if outside screen
         if (transform.position.y < -10.0f)
@@ -42,6 +44,7 @@ public class PlayerMovement : MonoBehaviour {
             GetComponent<Rigidbody2D>().AddForce(new Vector2(0.0f, jumpVelocity));
         }
 
+        //Ignore collision between player and platforms if y-velocity > 0
         if (GetComponent<Rigidbody2D>().velocity.y > 0)
         {
             Physics2D.IgnoreLayerCollision(8, 10, true);
