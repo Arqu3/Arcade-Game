@@ -42,7 +42,6 @@ public class PlayerMovement : MonoBehaviour {
             GetComponent<Rigidbody2D>().AddForce(new Vector2(0.0f, jumpVelocity));
         }
 
-        Debug.Log(GetComponent<Rigidbody2D>().velocity.y);
         if (GetComponent<Rigidbody2D>().velocity.y > 0)
         {
             Physics2D.IgnoreLayerCollision(8, 10, true);
