@@ -12,14 +12,17 @@ public class FollowPlayer : MonoBehaviour {
         Damp,
         Instant,
         OnlyY,
+        OnlyYUp,
         Still
     }
+    float highestY = 0.0f;
+    float currentY = 0.0f;
     public Mode currentMode = Mode.Instant;
 
 	// Use this for initialization
 	void Start ()
     {
-        transform.position = player.transform.position;
+        transform.position = new Vector3(0, 0, -10.0f);
 	}
 	
 	// Update is called once per frame
@@ -44,6 +47,18 @@ public class FollowPlayer : MonoBehaviour {
 
             case Mode.OnlyY:
                 transform.position = new Vector3(0, player.transform.position.y, -10);
+                break;
+
+            case Mode.OnlyYUp:
+                currentY = player.transform.position.y;
+                if (player.GetComponent<Rigidbody2D>().velocity.y > 0)
+                {
+                    if (currentY > highestY)
+                    {
+                        highestY = currentY;
+                        transform.position = new Vector3(0, player.transform.position.y, -10);
+                    }
+                }
                 break;
 
             case Mode.Still:

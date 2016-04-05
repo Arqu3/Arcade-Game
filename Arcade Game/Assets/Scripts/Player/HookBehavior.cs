@@ -17,6 +17,8 @@ public class HookBehavior : MonoBehaviour {
 	// Update is called once per frame
 	void Update ()
     {
+        //If has been alive for X time, destroy it
+        Destroy(this.gameObject, 5.0f);
 	}
 
     void OnCollisionEnter2D(Collision2D aCollision)

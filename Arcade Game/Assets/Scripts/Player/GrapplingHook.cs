@@ -102,6 +102,8 @@ public class GrapplingHook : MonoBehaviour {
 				Destroy(clone);
 				hasShot = false;
 				willMove = false;
+
+                GetComponent<Rigidbody2D>().AddForce(new Vector2(0.0f, 450.0f));
 			}
 		}
 	}
