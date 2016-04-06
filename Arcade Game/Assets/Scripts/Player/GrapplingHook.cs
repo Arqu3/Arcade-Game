@@ -13,10 +13,12 @@ public class GrapplingHook : MonoBehaviour {
 	public bool hasShot = false;
 	bool willMove = false;
 	GameObject clone;
+    GameObject myCamera;
 
 	// Use this for initialization
 	void Start ()
 	{
+        myCamera = GameObject.FindGameObjectWithTag("MainCamera");
 	}
 	
 	// Update is called once per frame
@@ -83,6 +85,7 @@ public class GrapplingHook : MonoBehaviour {
 		GetComponent<Rigidbody2D>().velocity = Vector2.zero;
 		GetComponent<Rigidbody2D>().angularVelocity = 0;
 		willMove = true;
+        myCamera.SendMessage("ToggleHookFollow", SendMessageOptions.RequireReceiver);
 	}
 
 	void MoveToHook()
@@ -102,6 +105,8 @@ public class GrapplingHook : MonoBehaviour {
 				Destroy(clone);
 				hasShot = false;
 				willMove = false;
+
+                myCamera.SendMessage("ToggleHookFollow", SendMessageOptions.RequireReceiver);
 
                 GetComponent<Rigidbody2D>().AddForce(new Vector2(0.0f, 450.0f));
 			}

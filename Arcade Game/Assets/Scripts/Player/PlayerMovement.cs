@@ -10,6 +10,7 @@ public class PlayerMovement : MonoBehaviour {
     public Transform groundCheck;
     public LayerMask whatIsGround;
     bool isOnGround = false;
+    bool hasJumped = false;
 
 	// Use this for initialization
 	void Start()
@@ -21,7 +22,7 @@ public class PlayerMovement : MonoBehaviour {
 	{
         float hSpeed = Input.GetAxis("Horizontal");
 
-        isOnGround = Physics2D.OverlapCircle(groundCheck.position, 0.2f, whatIsGround);
+        isOnGround = Physics2D.OverlapCircle(groundCheck.position, 0.05f, whatIsGround);
 
         //Non-physics-based movement
         float x = hSpeed * maxSpeed * Time.deltaTime;
@@ -39,9 +40,14 @@ public class PlayerMovement : MonoBehaviour {
     //Regular update
     void Update()
     {
-        if (isOnGround && Input.GetKeyDown(KeyCode.Space))
+        if (isOnGround && GetComponent<Rigidbody2D>().velocity.y <= 0 && !hasJumped)
         {
+            hasJumped = true;
             GetComponent<Rigidbody2D>().AddForce(new Vector2(0.0f, jumpVelocity));
+        }
+        else if (!isOnGround)
+        {
+            hasJumped = false;
         }
 
         //Ignore collision between player and platforms if y-velocity > 0
@@ -52,6 +58,15 @@ public class PlayerMovement : MonoBehaviour {
         else
         {
             Physics2D.IgnoreLayerCollision(8, 10, false);
+        }
+
+        if (transform.position.x >= 14.15f)
+        {
+            transform.position = new Vector3(-14.0f, transform.position.y, 0);
+        }
+        else if(transform.position.x <= -14.15f)
+        {
+            transform.position = new Vector3(14.0f, transform.position.y, 0);
         }
     }
 }

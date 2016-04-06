@@ -18,6 +18,7 @@ public class FollowPlayer : MonoBehaviour {
     float highestY = 0.0f;
     float currentY = 0.0f;
     public Mode currentMode = Mode.Instant;
+    bool hookFollow = false;
 
 	// Use this for initialization
 	void Start ()
@@ -51,7 +52,7 @@ public class FollowPlayer : MonoBehaviour {
 
             case Mode.OnlyYUp:
                 currentY = player.transform.position.y;
-                if (player.GetComponent<Rigidbody2D>().velocity.y > 0)
+                if (player.GetComponent<Rigidbody2D>().velocity.y > 0 || hookFollow)
                 {
                     if (currentY > highestY)
                     {
@@ -66,4 +67,9 @@ public class FollowPlayer : MonoBehaviour {
                 break;
         }
 	}
+
+    void ToggleHookFollow()
+    {
+        hookFollow = !hookFollow;
+    }
 }
