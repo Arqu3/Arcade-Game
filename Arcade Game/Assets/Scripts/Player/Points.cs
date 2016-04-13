@@ -43,4 +43,9 @@ public class Points : MonoBehaviour {
             }
         }
 	}
+
+    void addScore(int num)
+    {
+        score += num;
+    }
 }

@@ -15,7 +15,7 @@ public class HookBehavior : MonoBehaviour {
         player = GameObject.FindGameObjectWithTag("Player");
         if (GameObject.FindGameObjectWithTag("Player") == null)
         {
-            Debug.Log("Hook could not find player");
+            Debug.Log("Hook could not find player gameobject");
         }
 	}
 	
@@ -52,6 +52,12 @@ public class HookBehavior : MonoBehaviour {
             isAttached = true;
             GetComponent<Rigidbody2D>().velocity = new Vector2(0, 0);
             player.SendMessage("SetHookMovement");
+            player.SendMessage("toggleHooked");
+        }
+
+        if (aCollision.gameObject.tag == "Player")
+        {
+            player.SendMessage("toggleHooked");
         }
     }
 }

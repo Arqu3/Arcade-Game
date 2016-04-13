@@ -6,12 +6,15 @@ public class GrapplingHook : MonoBehaviour {
 	public GameObject hookPrefab;
 	public float shotSpeed = 20.0f;
 	public float moveToHookSpeed = 400.0f;
+    public float cooldown = 1.0f;
+    float coolDownTimer = 0.0f;
 
 	Vector3 relativePlayerPos;
 	public Vector3 shootDirection;
 	public Vector3 moveDirection;
 	public bool hasShot = false;
 	bool willMove = false;
+    bool isOnCd = false;
 	GameObject clone;
     GameObject myCamera;
 
@@ -32,18 +35,20 @@ public class GrapplingHook : MonoBehaviour {
 		{
 			moveDirection = clone.gameObject.transform.position - transform.position;
 		}
-
-		//If hook is in air and shoots again
-		//if (Input.GetMouseButtonDown(0) && hasShot)
-		//{
-		//    Destroy(clone);
-		//    Shoot();
-		//}
-		//Shoot hook
-		if (Input.GetMouseButtonDown(0) && !hasShot)
+		if (Input.GetMouseButtonDown(0) && !hasShot && !isOnCd)
 		{
 			Shoot();
 		}
+
+        if (isOnCd)
+        {
+            coolDownTimer += Time.deltaTime;
+            if (coolDownTimer >= cooldown)
+            {
+                coolDownTimer = 0.0f;
+                ToggleCd();
+            }
+        }
 
 		//Only check collision between player and hook when player moves towards it
 		if (willMove)
@@ -108,12 +113,18 @@ public class GrapplingHook : MonoBehaviour {
                 myCamera.SendMessage("ToggleHookFollow", SendMessageOptions.RequireReceiver);
 
                 GetComponent<Rigidbody2D>().AddForce(new Vector2(0.0f, 450.0f));
-			}
-		}
+                ToggleCd();
+            }
+        }
 	}
 
     void ToggleHasShot()
     {
         hasShot = false;
+    }
+
+    void ToggleCd()
+    {
+        isOnCd = !isOnCd;
     }
 }
