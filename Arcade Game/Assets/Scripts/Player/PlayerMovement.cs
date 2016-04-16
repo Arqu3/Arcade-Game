@@ -11,7 +11,11 @@ public class PlayerMovement : MonoBehaviour {
     public LayerMask whatIsGround;
     bool isOnGround = false;
     bool isInAir = false;
-    bool isHooked = false;
+    public bool isHooked = false;
+
+    float cdTimer = 0.0f;
+    float cd = 0.25f;
+    bool canJump = true;
 
 	// Use this for initialization
 	void Start()
@@ -30,6 +34,20 @@ public class PlayerMovement : MonoBehaviour {
 
         isOnGround = Physics2D.OverlapCircle(groundCheck.position, 0.1f, whatIsGround);
 
+        if (!isHooked)
+        {
+            cdTimer += Time.deltaTime;
+            if (cdTimer >= cd)
+            {
+                canJump = true;
+            }
+        }
+        else
+        {
+            cdTimer = 0.0f;
+            canJump = false;
+        }
+
         AutoJump();
 
         MovementRestrictions();
@@ -37,19 +55,22 @@ public class PlayerMovement : MonoBehaviour {
 
     void AutoJump()
     {
-        //Check if player is standing on something
-        if (!isOnGround)
+        if (canJump)
         {
-            isInAir = false;
-        }
-        //If player is standing on something, jump
-        else if (isOnGround && GetComponent<Rigidbody2D>().velocity.y <= 0.0f && !isInAir)
-        {
-            if (!isHooked)
+            //Check if player is standing on something
+            if (!isOnGround)
             {
-                GetComponent<Rigidbody2D>().velocity = new Vector2(0.0f, 0.0f);
-                isInAir = true;
-                GetComponent<Rigidbody2D>().AddForce(new Vector2(0.0f, jumpVelocity));
+                isInAir = false;
+            }
+            //If player is standing on something, jump
+            else if (isOnGround && GetComponent<Rigidbody2D>().velocity.y <= 0.0f && !isInAir)
+            {
+                if (!isHooked)
+                {
+                    GetComponent<Rigidbody2D>().velocity = new Vector2(0.0f, 0.0f);
+                    isInAir = true;
+                    GetComponent<Rigidbody2D>().AddForce(new Vector2(0.0f, jumpVelocity));
+                }
             }
         }
     }
@@ -80,7 +101,7 @@ public class PlayerMovement : MonoBehaviour {
     void OnCollisionEnter2D(Collision2D aCollision)
     {
         //if player falls outside screen, reload level
-        if (aCollision.gameObject.tag == "CameraBorderDown")
+        if (aCollision.gameObject.tag == "MainCamera")
         {
             SceneManager.LoadScene(0);
         }

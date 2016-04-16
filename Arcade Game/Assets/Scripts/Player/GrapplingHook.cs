@@ -7,6 +7,7 @@ public class GrapplingHook : MonoBehaviour {
 	public float shotSpeed = 20.0f;
 	public float moveToHookSpeed = 400.0f;
     public float cooldown = 1.0f;
+    public float breakDistance = 1.0f;
     float coolDownTimer = 0.0f;
 
 	Vector3 relativePlayerPos;
@@ -33,7 +34,6 @@ public class GrapplingHook : MonoBehaviour {
 
 		if (willMove)
 		{
-			moveDirection = clone.gameObject.transform.position - transform.position;
 		}
 		if (Input.GetMouseButtonDown(0) && !hasShot && !isOnCd)
 		{
@@ -53,16 +53,23 @@ public class GrapplingHook : MonoBehaviour {
 		//Only check collision between player and hook when player moves towards it
 		if (willMove)
 		{
-			Physics2D.IgnoreLayerCollision(9, 10, false);
-			GetComponent<Rigidbody2D>().gravityScale = 0;
+            moveDirection = clone.gameObject.transform.position - transform.position;
+
+            if (moveDirection.magnitude <= breakDistance)
+            {
+                isOnHook();
+            }
+
+            //Physics2D.IgnoreLayerCollision(9, 10, false);
+            GetComponent<Rigidbody2D>().gravityScale = 0;
 			MoveToHook();
 		}
-		else
-		{
-			Physics2D.IgnoreLayerCollision(9, 10, true);
-			GetComponent<Rigidbody2D>().gravityScale = 1;
-		}
-	}
+        else
+        {
+        //    Physics2D.IgnoreLayerCollision(9, 10, true);
+            GetComponent<Rigidbody2D>().gravityScale = 1;
+        }
+    }
 
 	void Shoot()
 	{
@@ -100,23 +107,22 @@ public class GrapplingHook : MonoBehaviour {
 			transform.position.y + temp.y * moveToHookSpeed * Time.deltaTime);
 	}
 
-	void OnCollisionEnter2D(Collision2D aCollision)
-	{
-		if (willMove)
-		{
-			if (aCollision.gameObject.tag == "Hook")
-			{
-				Destroy(clone);
-				hasShot = false;
-				willMove = false;
+    void isOnHook()
+    {
+        Destroy(clone);
+        hasShot = false;
+        willMove = false;
 
-                myCamera.SendMessage("ToggleHookFollow", SendMessageOptions.RequireReceiver);
+        myCamera.SendMessage("ToggleHookFollow", SendMessageOptions.RequireReceiver);
 
-                GetComponent<Rigidbody2D>().AddForce(new Vector2(0.0f, 450.0f));
-                ToggleCd();
-            }
+        this.gameObject.SendMessage("toggleHooked");
+
+        if (GetComponent<Rigidbody2D>().velocity.y >= 0)
+        {
+            GetComponent<Rigidbody2D>().AddForce(new Vector2(0.0f, 450.0f));
         }
-	}
+        ToggleCd();
+    }
 
     void ToggleHasShot()
     {

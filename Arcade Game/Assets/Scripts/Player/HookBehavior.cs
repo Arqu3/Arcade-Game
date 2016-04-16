@@ -54,10 +54,13 @@ public class HookBehavior : MonoBehaviour {
             player.SendMessage("SetHookMovement");
             player.SendMessage("toggleHooked");
         }
-
-        if (aCollision.gameObject.tag == "Player")
-        {
-            player.SendMessage("toggleHooked");
-        }
     }
+
+    //void OnTriggerEnter2D(Collider2D aCollider)
+    //{
+    //    if (aCollider.gameObject.tag == "Player")
+    //    {
+    //        player.SendMessage("toggleHooked");
+    //    }
+    //}
 }
