@@ -80,21 +80,23 @@ public class PlayerMovement : MonoBehaviour {
         //Ignore collision between player and platforms if y-velocity > 0
         if (GetComponent<Rigidbody2D>().velocity.y > 0 || isHooked)
         {
-            Physics2D.IgnoreLayerCollision(8, 10, true);
+            GetComponent<CircleCollider2D>().isTrigger = true;
+            //Physics2D.IgnoreLayerCollision(8, 10, true);
         }
         else if (!isHooked)
         {
-            Physics2D.IgnoreLayerCollision(8, 10, false);
+            GetComponent<CircleCollider2D>().isTrigger = false;
+            //Physics2D.IgnoreLayerCollision(8, 10, false);
         }
 
         //Move player to other side of screen if outside
-        if (transform.position.x >= 14.15f)
+        if (transform.position.x >= 16.0f)
         {
-            transform.position = new Vector3(-14.0f, transform.position.y, 0);
+            transform.position = new Vector3(-16.0f, transform.position.y, 0);
         }
-        else if (transform.position.x <= -14.15f)
+        else if (transform.position.x <= -16.0f)
         {
-            transform.position = new Vector3(14.0f, transform.position.y, 0);
+            transform.position = new Vector3(16.0f, transform.position.y, 0);
         }
     }
 

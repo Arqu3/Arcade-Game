@@ -1,18 +1,19 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class PlatformBehavior : MonoBehaviour {
-
-    GameObject generator;
+public class PlatformBehavior : MonoBehaviour
+{
+    Generator generator;
 
 	// Use this for initialization
-	void Start () {
-        generator = GameObject.FindGameObjectWithTag("SceneHandler");
+	void Start ()
+    {
+        generator = GameObject.FindGameObjectWithTag("SceneHandler").GetComponent<Generator>();
 	}
 	
 	// Update is called once per frame
-	void Update () {
-	
+	void Update ()
+    {
 	}
 
     void OnCollisionEnter2D(Collision2D aCollision)
@@ -20,7 +21,7 @@ public class PlatformBehavior : MonoBehaviour {
         //Remove platform if outside screen
         if (aCollision.gameObject.tag == "MainCamera")
         {
-            //generator.SendMessage("RemoveLastPosition");
+            generator.SendMessage("RemoveLastPosition");
             Destroy(this.gameObject);
         }
     }

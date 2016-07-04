@@ -5,7 +5,7 @@ TagManager:
   serializedVersion: 2
   tags:
   - Hook
-  - Block
+  - Platform
   - CameraBorderDown
   - SceneHandler
   layers:
@@ -17,7 +17,7 @@ TagManager:
   - UI
   - 
   - 
-  - Block
+  - Platform
   - Hook
   - Player
   - CameraBorderDown

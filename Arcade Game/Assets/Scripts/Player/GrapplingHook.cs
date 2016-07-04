@@ -32,9 +32,6 @@ public class GrapplingHook : MonoBehaviour {
 
 		shootDirection = Input.mousePosition - relativePlayerPos;
 
-		if (willMove)
-		{
-		}
 		if (Input.GetMouseButtonDown(0) && !hasShot && !isOnCd)
 		{
 			Shoot();
@@ -60,13 +57,11 @@ public class GrapplingHook : MonoBehaviour {
                 isOnHook();
             }
 
-            //Physics2D.IgnoreLayerCollision(9, 10, false);
             GetComponent<Rigidbody2D>().gravityScale = 0;
 			MoveToHook();
 		}
         else
         {
-        //    Physics2D.IgnoreLayerCollision(9, 10, true);
             GetComponent<Rigidbody2D>().gravityScale = 1;
         }
     }
@@ -112,6 +107,7 @@ public class GrapplingHook : MonoBehaviour {
         Destroy(clone);
         hasShot = false;
         willMove = false;
+        GetComponent<CircleCollider2D>().isTrigger = true;
 
         myCamera.SendMessage("ToggleHookFollow", SendMessageOptions.RequireReceiver);
 
