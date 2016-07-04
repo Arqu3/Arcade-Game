@@ -15,7 +15,6 @@ public class Points : MonoBehaviour {
     public float distToScore = 100.0f;
 
     int score = 0;
-
 	// Use this for initialization
 	void Start()
     {
@@ -28,13 +27,16 @@ public class Points : MonoBehaviour {
 
         currentY = player.transform.position.y;
 
-        if (player.GetComponent<Rigidbody2D>().velocity.y > 0)
+        //Only able to gain points when moving up or is hooked
+        if (player.GetComponent<Rigidbody2D>().velocity.y > 0 || player.GetComponent<PlayerMovement>().isHooked)
         {
+            //If current y position is greater than current known max y, add distance and update max y
             if (currentY > maxY)
             {
                 maxY = currentY;
 
                 dist++;
+                //If distance is greather than threshold, add score and reset distance
                 if (dist >= distToScore)
                 {
                     score++;
@@ -43,4 +45,9 @@ public class Points : MonoBehaviour {
             }
         }
 	}
+
+    void addScore(int num)
+    {
+        score += num;
+    }
 }

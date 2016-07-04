@@ -11,76 +11,106 @@ public class PlayerMovement : MonoBehaviour {
     public LayerMask whatIsGround;
     bool isOnGround = false;
     bool isInAir = false;
+    public bool isHooked = false;
+
+    float cdTimer = 0.0f;
+    float cd = 0.25f;
+    bool canJump = true;
 
 	// Use this for initialization
 	void Start()
 	{
 	}
-	
-	//Fixed update
-	void FixedUpdate()
-	{
-        //Non-physics-based movement
-        float hSpeed = Input.GetAxis("Horizontal");
-        float x = hSpeed * maxSpeed * Time.deltaTime;
-        transform.position = transform.position + new Vector3(x, 0, 0);
-	}
-
     //Regular update
     void Update()
     {
+        //Non-physics-based movement
+        if (!isHooked)
+        {
+            float hSpeed = Input.GetAxis("Horizontal");
+            float x = hSpeed * maxSpeed * Time.deltaTime;
+            transform.position = transform.position + new Vector3(x, 0, 0);
+        }
+
         isOnGround = Physics2D.OverlapCircle(groundCheck.position, 0.1f, whatIsGround);
 
-        Jump();
+        if (!isHooked)
+        {
+            cdTimer += Time.deltaTime;
+            if (cdTimer >= cd)
+            {
+                canJump = true;
+            }
+        }
+        else
+        {
+            cdTimer = 0.0f;
+            canJump = false;
+        }
+
+        AutoJump();
 
         MovementRestrictions();
     }
 
-    void Jump()
+    void AutoJump()
     {
-        //Check if player is standing on something
-        if (!isOnGround)
+        if (canJump)
         {
-            isInAir = false;
-        }
-        //If player is standing on something, jump
-        else if (isOnGround && GetComponent<Rigidbody2D>().velocity.y <= 0.0f && !isInAir)
-        {
-            GetComponent<Rigidbody2D>().velocity = new Vector2(0.0f, 0.0f);
-            isInAir = true;
-            GetComponent<Rigidbody2D>().AddForce(new Vector2(0.0f, jumpVelocity));
+            //Check if player is standing on something
+            if (!isOnGround)
+            {
+                isInAir = false;
+            }
+            //If player is standing on something, jump
+            else if (isOnGround && GetComponent<Rigidbody2D>().velocity.y <= 0.0f && !isInAir)
+            {
+                if (!isHooked)
+                {
+                    GetComponent<Rigidbody2D>().velocity = new Vector2(0.0f, 0.0f);
+                    isInAir = true;
+                    GetComponent<Rigidbody2D>().AddForce(new Vector2(0.0f, jumpVelocity));
+                }
+            }
         }
     }
 
     void MovementRestrictions()
     {
         //Ignore collision between player and platforms if y-velocity > 0
-        if (GetComponent<Rigidbody2D>().velocity.y > 0)
+        if (GetComponent<Rigidbody2D>().velocity.y > 0 || isHooked)
         {
-            Physics2D.IgnoreLayerCollision(8, 10, true);
+            GetComponent<CircleCollider2D>().isTrigger = true;
+            //Physics2D.IgnoreLayerCollision(8, 10, true);
         }
-        else
+        else if (!isHooked)
         {
-            Physics2D.IgnoreLayerCollision(8, 10, false);
+            GetComponent<CircleCollider2D>().isTrigger = false;
+            //Physics2D.IgnoreLayerCollision(8, 10, false);
         }
 
         //Move player to other side of screen if outside
-        if (transform.position.x >= 14.15f)
+        if (transform.position.x >= 16.0f)
         {
-            transform.position = new Vector3(-14.0f, transform.position.y, 0);
+            transform.position = new Vector3(-16.0f, transform.position.y, 0);
         }
-        else if (transform.position.x <= -14.15f)
+        else if (transform.position.x <= -16.0f)
         {
-            transform.position = new Vector3(14.0f, transform.position.y, 0);
+            transform.position = new Vector3(16.0f, transform.position.y, 0);
         }
     }
 
     void OnCollisionEnter2D(Collision2D aCollision)
     {
         //if player falls outside screen, reload level
-        if (aCollision.gameObject.tag == "CameraBorderDown")
+        if (aCollision.gameObject.tag == "MainCamera")
         {
             SceneManager.LoadScene(0);
         }
+    }
+
+    void toggleHooked()
+    {
+        isHooked = !isHooked;
     }
 }

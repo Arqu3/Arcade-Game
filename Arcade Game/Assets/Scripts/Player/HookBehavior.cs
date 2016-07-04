@@ -7,7 +7,7 @@ public class HookBehavior : MonoBehaviour {
     bool isAttached = false;
     float timer = 0.0f;
     //Time (in seconds) before hook is destroyed
-    public float thresholdValue = 3.0f;
+    public float lifeTime = 3.0f;
 
 	// Use this for initialization
 	void Start()
@@ -15,7 +15,7 @@ public class HookBehavior : MonoBehaviour {
         player = GameObject.FindGameObjectWithTag("Player");
         if (GameObject.FindGameObjectWithTag("Player") == null)
         {
-            Debug.Log("Hook could not find player");
+            Debug.Log("Hook could not find player gameobject");
         }
 	}
 	
@@ -33,7 +33,7 @@ public class HookBehavior : MonoBehaviour {
         if (!isAttached)
         {
             timer += Time.deltaTime;
-            if (timer >= thresholdValue)
+            if (timer >= lifeTime)
             {
                 player.gameObject.SendMessage("ToggleHasShot");
                 Destroy(this.gameObject);
@@ -47,11 +47,20 @@ public class HookBehavior : MonoBehaviour {
 
     void OnCollisionEnter2D(Collision2D aCollision)
     {
-        if (aCollision.gameObject.tag == "Block")
+        if (aCollision.gameObject.tag == "Platform")
         {
             isAttached = true;
             GetComponent<Rigidbody2D>().velocity = new Vector2(0, 0);
             player.SendMessage("SetHookMovement");
+            player.SendMessage("toggleHooked");
         }
     }
+
+    //void OnTriggerEnter2D(Collider2D aCollider)
+    //{
+    //    if (aCollider.gameObject.tag == "Player")
+    //    {
+    //        player.SendMessage("toggleHooked");
+    //    }
+    //}
 }
