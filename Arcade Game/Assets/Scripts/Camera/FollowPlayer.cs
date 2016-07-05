@@ -3,9 +3,7 @@ using System.Collections;
 
 public class FollowPlayer : MonoBehaviour {
 
-    public GameObject player;
-    public float dampTime = 0.15f;
-    Vector3 vel = Vector3.zero;
+    public float m_DampTime = 0.15f;
 
     public enum Mode
     {
@@ -15,53 +13,57 @@ public class FollowPlayer : MonoBehaviour {
         OnlyYUp,
         Still
     }
-    float highestY = 0.0f;
-    float currentY = 0.0f;
-    public Mode currentMode = Mode.Instant;
-    bool hookFollow = false;
+    public Mode m_CurrentMode = Mode.Instant;
+
+    GameObject m_Player;
+    Vector3 m_Vel = Vector3.zero;
+    float m_HighestY = 0.0f;
+    float m_CurrentY = 0.0f;
+    bool m_HookFollow = false;
 
 	// Use this for initialization
 	void Start ()
     {
+        m_Player = GameObject.Find("Player");
         transform.position = new Vector3(0, 0, -10.0f);
 	}
 	
 	// Update is called once per frame
 	void Update ()
     {
-        switch(currentMode)
+        switch(m_CurrentMode)
         {
             //Follow player slowly
             case Mode.Damp:
-                if (player)
+                if (m_Player)
                 {
-                    Vector3 point = Camera.main.WorldToViewportPoint(player.transform.position);
-                    Vector3 delta = player.transform.position - Camera.main.ViewportToWorldPoint(new Vector3(0.5f, 0.5f, point.z));
+                    Vector3 point = Camera.main.WorldToViewportPoint(m_Player.transform.position);
+                    Vector3 delta = m_Player.transform.position - Camera.main.ViewportToWorldPoint(new Vector3(0.5f, 0.5f, point.z));
                     Vector3 destination = transform.position + delta;
                     destination.z = -10;
-                    transform.position = Vector3.SmoothDamp(transform.position, destination, ref vel, dampTime);
+                    transform.position = Vector3.SmoothDamp(transform.position, destination, ref m_Vel, m_DampTime);
                 }
                 break;
 
             //Follow player instantly
             case Mode.Instant:
-                transform.position = new Vector3(player.transform.position.x, player.transform.position.y, -10);
+                transform.position = new Vector3(m_Player.transform.position.x, m_Player.transform.position.y, -10);
                 break;
 
             //Follow player only on Y axis
             case Mode.OnlyY:
-                transform.position = new Vector3(0, player.transform.position.y, -10);
+                transform.position = new Vector3(0, m_Player.transform.position.y, -10);
                 break;
 
             //Follow player only on Y axis when moving up
             case Mode.OnlyYUp:
-                currentY = player.transform.position.y;
-                if (player.GetComponent<Rigidbody2D>().velocity.y > 0 || hookFollow)
+                m_CurrentY = m_Player.transform.position.y;
+                if (m_Player.GetComponent<Rigidbody2D>().velocity.y > 0 || m_HookFollow)
                 {
-                    if (currentY > highestY)
+                    if (m_CurrentY > m_HighestY)
                     {
-                        highestY = currentY;
-                        transform.position = new Vector3(0, player.transform.position.y, -10);
+                        m_HighestY = m_CurrentY;
+                        transform.position = new Vector3(0, m_Player.transform.position.y, -10);
                     }
                 }
                 break;
@@ -76,6 +78,6 @@ public class FollowPlayer : MonoBehaviour {
     //Help function to let camera follow player when using grappling hook
     void ToggleHookFollow()
     {
-        hookFollow = !hookFollow;
+        m_HookFollow = !m_HookFollow;
     }
 }

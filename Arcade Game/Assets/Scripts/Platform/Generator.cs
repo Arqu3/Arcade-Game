@@ -4,43 +4,43 @@ using System.Collections.Generic;
 
 public class Generator : MonoBehaviour
 {
-    public GameObject platformPrefab;
-    public GameObject movingPlatformPrefab;
-    public float xIncrease = 3.0f;
-    public float yIncrease = 5.0f;
-    public int initialNumber = 10;
+    public GameObject m_PlatformPrefab;
+    public GameObject m_MovingPlatformPrefab;
+    public float m_XIncrease = 3.0f;
+    public float m_YIncrease = 5.0f;
+    public int m_InitNumber = 10;
 
-    GameObject clone;
-    List<Vector3> posList = new List<Vector3>();
+    GameObject m_Clone;
+    List<Vector3> m_Poslist = new List<Vector3>();
 
-    int totalPlatformsCreated = 1;
-    int curPlatNum = 1;
+    int m_TotalPlatNum = 1;
+    int m_CurPlatNum = 1;
 
 	// Use this for initialization
 	void Start ()
     {
         //Safety check for increase values
-        if (xIncrease < 0)
+        if (m_XIncrease < 0)
         {
-            xIncrease *= -1;
+            m_XIncrease *= -1;
         }
-        if (yIncrease < 0)
+        if (m_YIncrease < 0)
         {
-            yIncrease *= -1;
+            m_YIncrease *= -1;
         }
 
         //Add first base platform
-        posList.Add(new Vector3(Random.Range(-8.6f, 8.6f), 0.0f, 0.0f));
-        clone = (GameObject)Instantiate(platformPrefab, posList[0], Quaternion.identity);
+        m_Poslist.Add(new Vector3(Random.Range(-8.6f, 8.6f), 0.0f, 0.0f));
+        m_Clone = (GameObject)Instantiate(m_PlatformPrefab, m_Poslist[0], Quaternion.identity);
 
-        GeneratePlatforms(initialNumber);
+        GeneratePlatforms(m_InitNumber);
     }
 
     // Update is called once per frame
     void Update()
     {
         //Generate more platforms if current number is low
-        if (curPlatNum <= 4)
+        if (m_CurPlatNum <= 4)
         {
             GeneratePlatforms(5);
         }
@@ -48,59 +48,59 @@ public class Generator : MonoBehaviour
 
     void GeneratePlatforms(int num)
     {
-        int temp = totalPlatformsCreated + num;
+        int temp = m_TotalPlatNum + num;
 
-        for (int i = totalPlatformsCreated; i < temp; i++)
+        for (int i = m_TotalPlatNum; i < temp; i++)
         {
-            totalPlatformsCreated++;
-            curPlatNum++;
+            m_TotalPlatNum++;
+            m_CurPlatNum++;
 
             //Add base position
-            posList.Add(new Vector3(Random.Range(posList[i - 1].x - xIncrease, posList[i - 1].x + xIncrease), yIncrease * i, 0.0f));
+            m_Poslist.Add(new Vector3(Random.Range(m_Poslist[i - 1].x - m_XIncrease, m_Poslist[i - 1].x + m_XIncrease), m_Poslist[i - 1].y + m_YIncrease, 0.0f));
 
             //Set position if x is lesser or greater than max values
-            if (posList[i].x > 8.6f)
+            if (m_Poslist[i].x > 8.6f)
             {
-                posList[i] = new Vector3(8.6f, posList[i].y, 0.0f);
+                m_Poslist[i] = new Vector3(8.6f, m_Poslist[i].y, 0.0f);
             }
-            else if (posList[i].x < -8.6f)
+            else if (m_Poslist[i].x < -8.6f)
             {
-                posList[i] = new Vector3(-8.6f, posList[i].y, 0.0f);
+                m_Poslist[i] = new Vector3(-8.6f, m_Poslist[i].y, 0.0f);
             }
 
 
             //Reroll position if last was at edge
-            if (posList[i - 1].x >= 8.6f)
+            if (m_Poslist[i - 1].x >= 8.6f)
             {
-                posList[i] = new Vector3(Random.Range(8.6f - xIncrease, 8.0f), posList[i].y, 0.0f);
+                m_Poslist[i] = new Vector3(Random.Range(8.6f - m_XIncrease, 8.0f), m_Poslist[i].y, 0.0f);
             }
-            else if (posList[i - 1].x <= -8.6f)
+            else if (m_Poslist[i - 1].x <= -8.6f)
             {
-                posList[i] = new Vector3(Random.Range(-8.6f + xIncrease, -8.0f), posList[i].y, 0.0f);
+                m_Poslist[i] = new Vector3(Random.Range(-8.6f + m_XIncrease, -8.0f), m_Poslist[i].y, 0.0f);
             }
 
             //Start generating moving platforms if total created is 20 or above
-            if (totalPlatformsCreated >= 20)
+            if (m_TotalPlatNum >= 20)
             {
                 //Can return 1 and 2, not 0
                 if (Random.Range(0, 2) == 1)
                 {
-                    clone = (GameObject)Instantiate(platformPrefab, posList[i], Quaternion.identity);
+                    m_Clone = (GameObject)Instantiate(m_PlatformPrefab, m_Poslist[i], Quaternion.identity);
                 }
                 else
                 {
-                    clone = (GameObject)Instantiate(movingPlatformPrefab, posList[i], Quaternion.identity);
+                    m_Clone = (GameObject)Instantiate(m_MovingPlatformPrefab, m_Poslist[i], Quaternion.identity);
                 }
             }
             else
             {
-                clone = (GameObject)Instantiate(platformPrefab, posList[i], Quaternion.identity);
+                m_Clone = (GameObject)Instantiate(m_PlatformPrefab, m_Poslist[i], Quaternion.identity);
             }
         }
     }
 
     void RemoveLastPosition()
     {
-        curPlatNum--;
+        m_CurPlatNum--;
     }
 }

@@ -4,43 +4,46 @@ using UnityEngine.UI;
 
 public class Points : MonoBehaviour {
 
-    public GameObject player;
-    public Text scoreText;
-
-    float currentY = 0.0f;
-    float maxY = 0.0f;
-    float dist;
-
     //How long player has to travel to get a point
     public float distToScore = 100.0f;
 
-    int score = 0;
+    GameObject m_Player;
+    Text m_ScoreText;
+
+    float m_CurrentY = 0.0f;
+    float m_MaxY = 0.0f;
+    float m_Dist = 0.0f;
+
+    int m_Score = 0;
+
 	// Use this for initialization
 	void Start()
     {
+        m_Player = GameObject.Find("Player");
+        m_ScoreText = GameObject.Find("ScoreText").GetComponent<Text>();
 	}
 	
 	// Update is called once per frame
 	void Update()
     {
-        scoreText.text = "Score: " + score;
+        m_ScoreText.text = "Score: " + m_Score;
 
-        currentY = player.transform.position.y;
+        m_CurrentY = m_Player.transform.position.y;
 
         //Only able to gain points when moving up or is hooked
-        if (player.GetComponent<Rigidbody2D>().velocity.y > 0 || player.GetComponent<PlayerMovement>().isHooked)
+        if (m_Player.GetComponent<Rigidbody2D>().velocity.y > 0 || m_Player.GetComponent<PlayerMovement>().m_IsHooked)
         {
             //If current y position is greater than current known max y, add distance and update max y
-            if (currentY > maxY)
+            if (m_CurrentY > m_MaxY)
             {
-                maxY = currentY;
+                m_MaxY = m_CurrentY;
 
-                dist++;
+                m_Dist++;
                 //If distance is greather than threshold, add score and reset distance
-                if (dist >= distToScore)
+                if (m_Dist >= distToScore)
                 {
-                    score++;
-                    dist = 0.0f;
+                    m_Score++;
+                    m_Dist = 0.0f;
                 }
             }
         }
@@ -48,6 +51,6 @@ public class Points : MonoBehaviour {
 
     void addScore(int num)
     {
-        score += num;
+        m_Score += num;
     }
 }

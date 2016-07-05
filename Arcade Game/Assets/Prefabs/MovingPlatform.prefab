@@ -68,10 +68,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: da0d1fdf530ea9040afe9bb7e590c974, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  maxX: 4
-  speed: 2
-  isOffset: 1
-  currentDirection: 0
+  m_MaxX: 5
+  m_Speed: 4
+  m_IsOffset: 1
+  m_CurrentDirection: 0
 --- !u!212 &21296994
 SpriteRenderer:
   m_ObjectHideFlags: 1

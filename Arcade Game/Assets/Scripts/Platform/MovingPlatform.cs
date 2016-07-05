@@ -3,14 +3,13 @@ using System.Collections;
 
 public class MovingPlatform : MonoBehaviour
 {
+    public float m_MaxX = 4.0f;
+    public float m_Speed = 2.0f;
+    public bool m_IsOffset = true;
 
-    public float maxX = 4.0f;
-    public float speed = 2.0f;
-    public bool isOffset = true;
-
-    float minX;
-    Vector3 curDir = Vector3.zero;
-    Vector3 initialPosition;
+    float m_MinX;
+    Vector3 m_CurDir = Vector3.zero;
+    Vector3 m_InitPos;
 
     public enum Direction
     {
@@ -20,34 +19,34 @@ public class MovingPlatform : MonoBehaviour
         Down
     }
 
-    public Direction currentDirection = Direction.Right;
+    public Direction m_CurrentDirection = Direction.Right;
 
 	// Use this for initialization
 	void Start ()
     {
-        minX = maxX * -1;
-        initialPosition = transform.position;
+        m_MinX = m_MaxX * -1;
+        m_InitPos = transform.position;
 
         //Set position if maxX is outside screen
-        if (initialPosition.x + maxX >= 8.6f)
+        if (m_InitPos.x + m_MaxX >= 8.6f)
         {
-            transform.position = new Vector3(8.6f - maxX, transform.position.y);
-            initialPosition = transform.position;
+            transform.position = new Vector3(8.6f - m_MaxX, transform.position.y);
+            m_InitPos = transform.position;
         }
-        else if (initialPosition.x + minX <= -8.6f)
+        else if (m_InitPos.x + m_MinX <= -8.6f)
         {
-            transform.position = new Vector3(-8.6f - minX, transform.position.y);
-            initialPosition = transform.position;
+            transform.position = new Vector3(-8.6f - m_MinX, transform.position.y);
+            m_InitPos = transform.position;
         }
 
         //Random starting direction
         if (Random.Range(0, 2) == 1)
         {
-            currentDirection = Direction.Right;
+            m_CurrentDirection = Direction.Right;
         }
         else
         {
-            currentDirection = Direction.Left;
+            m_CurrentDirection = Direction.Left;
         }
     }
 	
@@ -55,61 +54,61 @@ public class MovingPlatform : MonoBehaviour
 	void Update ()
     {
         //If offset position is active
-        if (isOffset)
+        if (m_IsOffset)
         {
-            if (transform.position.x > maxX + initialPosition.x)
+            if (transform.position.x > m_MaxX + m_InitPos.x)
             {
                 SetDirection(Direction.Left);
             }
-            else if (transform.position.x < minX + initialPosition.x)
+            else if (transform.position.x < m_MinX + m_InitPos.x)
             {
                 SetDirection(Direction.Right);
             }
         }
         else
         {
-            if (transform.position.x > maxX)
+            if (transform.position.x > m_MaxX)
             {
                 SetDirection(Direction.Left);
             }
-            else if (transform.position.x < minX)
+            else if (transform.position.x < m_MinX)
             {
                 SetDirection(Direction.Right);
             }
         }
 
         //What happens during different states
-        switch(currentDirection)
+        switch(m_CurrentDirection)
         {
             case Direction.Right:
-                curDir = new Vector2(1, 0);
-                transform.position += curDir * speed * Time.deltaTime;
+                m_CurDir = new Vector2(1, 0);
+                transform.position += m_CurDir * m_Speed * Time.deltaTime;
                 break;
 
             case Direction.Left:
-                curDir = new Vector2(-1, 0);
-                transform.position += curDir * speed * Time.deltaTime;
+                m_CurDir = new Vector2(-1, 0);
+                transform.position += m_CurDir * m_Speed * Time.deltaTime;
                 break;
 
             case Direction.Up:
-                curDir = new Vector2(0, 1);
-                transform.position += curDir * speed * Time.deltaTime;
+                m_CurDir = new Vector2(0, 1);
+                transform.position += m_CurDir * m_Speed * Time.deltaTime;
                 break;
 
             case Direction.Down:
-                curDir = new Vector2(0, -1);
-                transform.position += curDir * speed * Time.deltaTime;
+                m_CurDir = new Vector2(0, -1);
+                transform.position += m_CurDir * m_Speed * Time.deltaTime;
                 break;
         }
 	}
 
     void SetDirection(Direction dir)
     {
-        currentDirection = dir;
+        m_CurrentDirection = dir;
     }
 
     void SetSpeed(float temp)
     {
-        speed = temp;
+        m_Speed = temp;
     }
 }

@@ -4,48 +4,54 @@ using UnityEngine.SceneManagement;
 
 public class PlayerMovement : MonoBehaviour {
 
-	public float maxSpeed = 10.0f;
-	public float jumpVelocity = 700.0f;
+    public Transform m_GroundCheck;
+    public LayerMask m_WhatIsGround;
+    public float m_MaxSpeed = 10.0f;
+	public float m_JumpVelocity = 700.0f;
+    public bool m_IsHooked = false;
+    public float m_ScreenBorderX = 16.0f;
 
-    public Transform groundCheck;
-    public LayerMask whatIsGround;
-    bool isOnGround = false;
-    bool isInAir = false;
-    public bool isHooked = false;
+    bool m_IsOnGround = false;
+    bool m_IsInAir = false;
 
-    float cdTimer = 0.0f;
-    float cd = 0.25f;
-    bool canJump = true;
+    float m_CDTimer = 0.0f;
+    float m_JumpCD = 0.25f;
+    bool m_CanJump = true;
+
+    Rigidbody2D m_Rigidbody;
+    Collider2D m_Collider;
 
 	// Use this for initialization
 	void Start()
 	{
+        m_Rigidbody = GetComponent<Rigidbody2D>();
+        m_Collider = GetComponent<CircleCollider2D>();
 	}
     //Regular update
     void Update()
     {
         //Non-physics-based movement
-        if (!isHooked)
+        if (!m_IsHooked)
         {
             float hSpeed = Input.GetAxis("Horizontal");
-            float x = hSpeed * maxSpeed * Time.deltaTime;
+            float x = hSpeed * m_MaxSpeed * Time.deltaTime;
             transform.position = transform.position + new Vector3(x, 0, 0);
         }
 
-        isOnGround = Physics2D.OverlapCircle(groundCheck.position, 0.1f, whatIsGround);
+        m_IsOnGround = Physics2D.OverlapCircle(m_GroundCheck.position, 0.1f, m_WhatIsGround);
 
-        if (!isHooked)
+        if (!m_IsHooked)
         {
-            cdTimer += Time.deltaTime;
-            if (cdTimer >= cd)
+            m_CDTimer += Time.deltaTime;
+            if (m_CDTimer >= m_JumpCD)
             {
-                canJump = true;
+                m_CanJump = true;
             }
         }
         else
         {
-            cdTimer = 0.0f;
-            canJump = false;
+            m_CDTimer = 0.0f;
+            m_CanJump = false;
         }
 
         AutoJump();
@@ -55,21 +61,21 @@ public class PlayerMovement : MonoBehaviour {
 
     void AutoJump()
     {
-        if (canJump)
+        if (m_CanJump)
         {
             //Check if player is standing on something
-            if (!isOnGround)
+            if (!m_IsOnGround)
             {
-                isInAir = false;
+                m_IsInAir = false;
             }
             //If player is standing on something, jump
-            else if (isOnGround && GetComponent<Rigidbody2D>().velocity.y <= 0.0f && !isInAir)
+            else if (m_IsOnGround && m_Rigidbody.velocity.y <= 0.0f && !m_IsInAir)
             {
-                if (!isHooked)
+                if (!m_IsHooked)
                 {
-                    GetComponent<Rigidbody2D>().velocity = new Vector2(0.0f, 0.0f);
-                    isInAir = true;
-                    GetComponent<Rigidbody2D>().AddForce(new Vector2(0.0f, jumpVelocity));
+                    m_Rigidbody.velocity = Vector2.zero;
+                    m_IsInAir = true;
+                    m_Rigidbody.AddForce(new Vector2(0.0f, m_JumpVelocity), ForceMode2D.Impulse);
                 }
             }
         }
@@ -78,25 +84,23 @@ public class PlayerMovement : MonoBehaviour {
     void MovementRestrictions()
     {
         //Ignore collision between player and platforms if y-velocity > 0
-        if (GetComponent<Rigidbody2D>().velocity.y > 0 || isHooked)
+        if (m_Rigidbody.velocity.y > 0 || m_IsHooked)
         {
-            GetComponent<CircleCollider2D>().isTrigger = true;
-            //Physics2D.IgnoreLayerCollision(8, 10, true);
+            m_Collider.isTrigger = true;
         }
-        else if (!isHooked)
+        else if (!m_IsHooked)
         {
-            GetComponent<CircleCollider2D>().isTrigger = false;
-            //Physics2D.IgnoreLayerCollision(8, 10, false);
+            m_Collider.isTrigger = false;
         }
 
         //Move player to other side of screen if outside
-        if (transform.position.x >= 16.0f)
+        if (transform.position.x >= m_ScreenBorderX)
         {
-            transform.position = new Vector3(-16.0f, transform.position.y, 0);
+            transform.position = new Vector3(-m_ScreenBorderX, transform.position.y, 0);
         }
-        else if (transform.position.x <= -16.0f)
+        else if (transform.position.x <= -m_ScreenBorderX)
         {
-            transform.position = new Vector3(16.0f, transform.position.y, 0);
+            transform.position = new Vector3(m_ScreenBorderX, transform.position.y, 0);
         }
     }
 
@@ -111,6 +115,6 @@ public class PlayerMovement : MonoBehaviour {
 
     void toggleHooked()
     {
-        isHooked = !isHooked;
+        m_IsHooked = !m_IsHooked;
     }
 }

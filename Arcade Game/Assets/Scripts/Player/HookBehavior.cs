@@ -3,16 +3,17 @@ using System.Collections;
 
 public class HookBehavior : MonoBehaviour {
 
-    GameObject player;
-    bool isAttached = false;
-    float timer = 0.0f;
     //Time (in seconds) before hook is destroyed
-    public float lifeTime = 3.0f;
+    public float m_LifeTime = 3.0f;
+
+    GameObject m_Player;
+    bool m_IsAttached = false;
+    float m_Timer = 0.0f;
 
 	// Use this for initialization
 	void Start()
     {
-        player = GameObject.FindGameObjectWithTag("Player");
+        m_Player = GameObject.FindGameObjectWithTag("Player");
         if (GameObject.FindGameObjectWithTag("Player") == null)
         {
             Debug.Log("Hook could not find player gameobject");
@@ -25,42 +26,41 @@ public class HookBehavior : MonoBehaviour {
         //Destroy hook if outside screen
         if (transform.position.x <= -14.5f || transform.position.x >= 14.5f)
         {
-            player.gameObject.SendMessage("ToggleHasShot");
+            m_Player.gameObject.SendMessage("ToggleHasShot");
             Destroy(this.gameObject);
         }
 
         //If block isn't attached to anything and has lived for X amount of time
-        if (!isAttached)
+        if (!m_IsAttached)
         {
-            timer += Time.deltaTime;
-            if (timer >= lifeTime)
+            m_Timer += Time.deltaTime;
+            if (m_Timer >= m_LifeTime)
             {
-                player.gameObject.SendMessage("ToggleHasShot");
+                m_Player.gameObject.SendMessage("ToggleHasShot");
                 Destroy(this.gameObject);
             }
         }
         else
         {
-            timer = 0.0f;
+            m_Timer = 0.0f;
         }
 	}
 
-    void OnCollisionEnter2D(Collision2D aCollision)
+    void OnTriggerEnter2D(Collider2D aCollision)
     {
+        if (aCollision.gameObject.tag == "Player")
+        {
+            transform.parent = null;
+        }
+
         if (aCollision.gameObject.tag == "Platform")
         {
-            isAttached = true;
+            m_IsAttached = true;
             GetComponent<Rigidbody2D>().velocity = new Vector2(0, 0);
-            player.SendMessage("SetHookMovement");
-            player.SendMessage("toggleHooked");
+            m_Player.SendMessage("SetHookMovement");
+            m_Player.SendMessage("toggleHooked");
+
+            transform.parent = aCollision.transform;
         }
     }
-
-    //void OnTriggerEnter2D(Collider2D aCollider)
-    //{
-    //    if (aCollider.gameObject.tag == "Player")
-    //    {
-    //        player.SendMessage("toggleHooked");
-    //    }
-    //}
 }

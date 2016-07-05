@@ -3,12 +3,12 @@ using System.Collections;
 
 public class PlatformBehavior : MonoBehaviour
 {
-    Generator generator;
+    Generator m_Generator;
 
 	// Use this for initialization
 	void Start ()
     {
-        generator = GameObject.FindGameObjectWithTag("SceneHandler").GetComponent<Generator>();
+        m_Generator = GameObject.Find("SceneHandler").GetComponent<Generator>();
 	}
 	
 	// Update is called once per frame
@@ -21,7 +21,7 @@ public class PlatformBehavior : MonoBehaviour
         //Remove platform if outside screen
         if (aCollision.gameObject.tag == "MainCamera")
         {
-            generator.SendMessage("RemoveLastPosition");
+            m_Generator.SendMessage("RemoveLastPosition");
             Destroy(this.gameObject);
         }
     }

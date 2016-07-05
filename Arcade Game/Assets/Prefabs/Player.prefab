@@ -57,7 +57,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 133280}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: -0.549, z: -1}
+  m_LocalPosition: {x: 0, y: -0.46, z: -1}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_Children: []
@@ -119,14 +119,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b75458a8ae8bec64ca28a52ab563ffeb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  hookPrefab: {fileID: 161030, guid: fad22744f5636204f98e908af74d4467, type: 2}
-  shotSpeed: 700
-  moveToHookSpeed: 15
-  cooldown: 0.25
-  breakDistance: 1
-  shootDirection: {x: 0, y: 0, z: 0}
-  moveDirection: {x: 0, y: 0, z: 0}
-  hasShot: 0
+  m_HookPrefab: {fileID: 161030, guid: fad22744f5636204f98e908af74d4467, type: 2}
+  m_ShotSpeed: 1000
+  m_MoveToHookSpeed: 20
+  m_Cooldown: 1
+  m_BreakDistance: 1.5
+  m_ShootDirection: {x: 0, y: 0, z: 0}
+  m_MoveDirection: {x: 0, y: 0, z: 0}
+  m_HasShot: 0
 --- !u!114 &11478332
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -138,13 +138,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 890c4e72dc201b048a391a243494b889, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  maxSpeed: 10
-  jumpVelocity: 450
-  groundCheck: {fileID: 456040}
-  whatIsGround:
+  m_GroundCheck: {fileID: 456040}
+  m_WhatIsGround:
     serializedVersion: 2
     m_Bits: 256
-  isHooked: 0
+  m_MaxSpeed: 15
+  m_JumpVelocity: 9.2
+  m_IsHooked: 0
+  m_ScreenBorderX: 12
 --- !u!212 &21239118
 SpriteRenderer:
   m_ObjectHideFlags: 1
