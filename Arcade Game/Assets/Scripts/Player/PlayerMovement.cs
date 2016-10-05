@@ -30,6 +30,9 @@ public class PlayerMovement : MonoBehaviour {
     //Regular update
     void Update()
     {
+        if (Input.GetKeyDown(KeyCode.Escape))
+            Application.Quit();
+
         //Non-physics-based movement
         if (!m_IsHooked)
         {
